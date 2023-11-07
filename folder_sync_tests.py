@@ -29,7 +29,7 @@ class FolderSyncTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree(cls.temp_dir)
+        shutil.rmtree(cls.test_dir)
 
     def test_invalid_source_path(self):
         with self.assertRaises(ValueError):
@@ -87,22 +87,22 @@ class FolderSyncTest(unittest.TestCase):
         shutil.rmtree(nested_folder_path)
 
     def test_folder_added(self):
-        replica_folder_path = os.path.join(self.test_dir, "Replica Folder/Folder 1")
-        source_folder_path = os.path.join(self.test_dir, "Source Folder/Folder 1")
+        replica_folder_path = os.path.join(self.replica_folder, "Folder 1")
+        source_folder_path = os.path.join(self.source_folder, "Folder 1")
 
         self.assertTrue(os.path.exists(replica_folder_path))
         self.assertTrue(os.path.exists(source_folder_path))
 
     def test_folder_deleted(self):
-        source_folder_path = os.path.join(self.test_dir, "Source Folder/Folder 2")
-        replica_folder_path = os.path.join(self.test_dir, "Replica Folder/Folder 2")
+        source_folder_path = os.path.join(self.source_folder, "Folder 2")
+        replica_folder_path = os.path.join(self.replica_folder, "Folder 2")
 
         self.assertFalse(os.path.exists(source_folder_path))
         self.assertFalse(os.path.exists(replica_folder_path))
 
     def test_file_changed(self):
-        source_file_path = os.path.join(self.test_dir, "Source Folder/File 1.txt")
-        replica_file_path = os.path.join(self.test_dir, "Replica Folder/File 1.txt")
+        source_file_path = os.path.join(self.source_folder, "File 1.txt")
+        replica_file_path = os.path.join(self.replica_folder, "File 1.txt")
         with open(source_file_path, 'r') as file:
             src_file_content = file.read()
 
@@ -112,26 +112,38 @@ class FolderSyncTest(unittest.TestCase):
         self.assertEqual(src_file_content, replica_file_content)
 
     def test_nested_folder_added(self):
-        replica_folder_path = os.path.join(self.test_dir, "Replica Folder/Folder 1/Nested folder 1")
-        source_folder_path = os.path.join(self.test_dir, "Source Folder/Folder 1/Nested folder 1")
+        replica_folder_path = os.path.join(self.replica_folder, "Folder 1")
+        source_folder_path = os.path.join(self.source_folder, "Folder 1")
+        replica_nested_folder_path = os.path.join(replica_folder_path, "Nested folder 1")
+        source_nested_folder_path = os.path.join(source_folder_path, "Nested folder 1")
 
-        self.assertTrue(os.path.exists(replica_folder_path))
-        self.assertTrue(os.path.exists(source_folder_path))
+        self.assertTrue(os.path.exists(replica_nested_folder_path))
+        self.assertTrue(os.path.exists(source_nested_folder_path))
 
     def test_nested_folder_deleted(self):
-        replica_folder_path = os.path.join(self.test_dir, "Replica Folder/Folder 3/Nested folder 2")
-        source_folder_path = os.path.join(self.test_dir, "Source Folder/Folder 3/Nested folder 2")
+        replica_folder_path = os.path.join(self.replica_folder, "Folder 3")
+        source_folder_path = os.path.join(self.source_folder, "Folder 3")
+        replica_nested_folder_path = os.path.join(replica_folder_path, "Nested folder 2")
+        source_nested_folder_path = os.path.join(source_folder_path, "Nested folder 2")
 
-        self.assertFalse(os.path.exists(replica_folder_path))
-        self.assertFalse(os.path.exists(source_folder_path))
+        self.assertFalse(os.path.exists(replica_nested_folder_path))
+        self.assertFalse(os.path.exists(source_nested_folder_path))
 
     def test_nested_file_changed(self):
-        source_file_path = os.path.join(self.test_dir, "Source Folder/Folder 3/File 2.txt")
-        replica_file_path = os.path.join(self.test_dir, "Replica Folder/Folder 3/File 2.txt")
-        with open(source_file_path, 'r') as file:
+        source_file_path = os.path.join(self.source_folder, "Folder 3")
+        replica_file_path = os.path.join(self.replica_folder, "Folder 3")
+
+        source_nested_file_path = os.path.join(source_file_path, "File 2.txt")
+        replica_nested_file_path = os.path.join(replica_file_path, "File 2.txt")
+
+        with open(source_nested_file_path, 'r') as file:
             src_file_content = file.read()
 
-        with open(replica_file_path, 'r') as file:
+        with open(replica_nested_file_path, 'r') as file:
             replica_file_content = file.read()
 
         self.assertEqual(src_file_content, replica_file_content)
+
+
+if __name__ == "__main__":
+    unittest.main()
